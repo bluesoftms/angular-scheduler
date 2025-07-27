@@ -1,0 +1,96 @@
+<div class="day-view">
+  @if (allDayEvents().length > 0 || draggedEvent) {
+    <div class="all-day-section">
+      <div class="all-day-label">All day</div>
+      <div class="all-day-events"
+           (dragover)="$event.preventDefault()"
+           (drop)="onAllDayDrop($event)">
+        @for (event of allDayEvents(); track event.uuid) {
+          <div 
+            class="all-day-event" 
+            [style.backgroundColor]="event.color || '#1a73e8'"
+            draggable="true"
+            (dragstart)="onDragStart($event, event)"
+            (dragend)="onDragEnd($event)"
+            (click)="onEventClick(event)"
+            (touchstart)="onTouchStart($event, event)"
+            (touchmove)="onTouchMove($event)"
+            (touchend)="onTouchEnd($event)">
+            {{ event.title }}
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <div class="time-grid">
+    <div class="time-slots">
+      @for (hour of hours; track hour) {
+        <div class="hour-row" 
+             (click)="onTimeSlotClick($event, hour)"
+             (dragover)="onDragOver($event, hour)"
+             (dragleave)="onDragLeave($event)"
+             (drop)="onDrop($event, hour)"
+             [class.drag-over]="draggedOverHour === hour">
+          <div class="hour-label">
+            {{ formatHour(hour) }}
+          </div>
+          <div class="hour-slot"></div>
+        </div>
+      }
+    </div>
+
+    <div class="events-container">
+      @for (position of timedEventPositions(); track position.event.uuid) {
+        <div 
+          class="timed-event" 
+          [ngStyle]="getEventStyle(position)"
+          draggable="true"
+          (dragstart)="onDragStart($event, position.event)"
+          (dragend)="onDragEnd($event)"
+          (dragover)="onEventDragOver($event, position.event)"
+          (dragleave)="onEventDragLeave($event)"
+          (click)="onEventClick(position.event)"
+          (touchstart)="onTouchStart($event, position.event)"
+          (touchmove)="onTouchMove($event)"
+          (touchend)="onTouchEnd($event)"
+          [class.dragging]="draggedEvent?.uuid === position.event.uuid"
+          [class.hovered-over]="hoveredEventId === position.event.uuid && draggedEvent && draggedEvent.uuid !== position.event.uuid"
+          [class.resizing]="resizingEvent?.uuid === position.event.uuid">
+          <div class="event-time">
+            {{ formatEventTime(position.event.start) }} - {{ formatEventTime(position.event.end) }}
+          </div>
+          <div class="event-title">{{ position.event.title }}</div>
+          @if (position.event.location) {
+            <div class="event-location">{{ position.event.location }}</div>
+          }
+          
+          <!-- Resize handles -->
+          <div class="resize-handle resize-handle-top"
+               (mousedown)="onResizeStart($event, position.event, 'top')"></div>
+          <div class="resize-handle resize-handle-bottom"
+               (mousedown)="onResizeStart($event, position.event, 'bottom')"></div>
+        </div>
+      }
+      
+      @if (previewEventStyle()) {
+        <div 
+          class="timed-event preview-event"
+          [ngStyle]="previewEventStyle()">
+          <div class="event-time">Preview</div>
+          <div class="event-title">{{ draggedEvent?.title }}</div>
+        </div>
+      }
+      
+      @if (draggedEvent && draggedOverHour !== null) {
+        <div 
+          class="drop-indicator"
+          [style.top.px]="draggedOverHour * 60 + draggedOverMinutes"
+          [style.left.px]="0"
+          [style.right.px]="10">
+          <div class="drop-time">{{ formatDropTime() }}</div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

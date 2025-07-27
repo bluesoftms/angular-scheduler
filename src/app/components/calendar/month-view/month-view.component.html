@@ -1,0 +1,53 @@
+<div class="month-view">
+  <div class="month-header">
+    @for (dayName of weekDayNames; track dayName) {
+      <div class="weekday-name">{{ dayName }}</div>
+    }
+  </div>
+
+  <div class="month-grid">
+    @for (week of monthWeeks(); track $index) {
+      <div class="week-row">
+        @for (day of week; track day.date.getTime()) {
+          <div 
+            class="day-cell" 
+            [class.other-month]="!day.isCurrentMonth"
+            [class.today]="day.isToday"
+            [class.drag-over]="isDraggedOver(day)"
+            (click)="onDayClick(day)"
+            (dragover)="onDragOver($event, day)"
+            (dragleave)="onDragLeave($event)"
+            (drop)="onDrop($event, day)">
+            
+            <div class="day-number">{{ getDayNumber(day.date) }}</div>
+            
+            <div class="day-events">
+              @for (event of getVisibleEvents(day); track event.uuid) {
+                <div 
+                  class="month-event"
+                  [style.backgroundColor]="event.color || '#1a73e8'"
+                  [class.all-day]="event.allDay"
+                  draggable="true"
+                  (dragstart)="onDragStart($event, event)"
+                  (dragend)="onDragEnd($event)"
+                  (click)="onEventClick(event, $event)"
+                  [class.dragging]="draggedEvent?.uuid === event.uuid">
+                  @if (!event.allDay) {
+                    <span class="event-time">{{ formatEventTime(event.start) }}</span>
+                  }
+                  <span class="event-title">{{ event.title }}</span>
+                </div>
+              }
+              
+              @if (getMoreEventsCount(day) > 0) {
+                <div class="more-events">
+                  +{{ getMoreEventsCount(day) }} more
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

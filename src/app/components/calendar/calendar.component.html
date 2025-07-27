@@ -1,0 +1,83 @@
+<div class="calendar-container">
+  <div class="calendar-header">
+    <div class="header-left">
+      <button class="btn btn-primary" (click)="navigateToday()">Today</button>
+      <button class="btn btn-icon" (click)="navigatePrevious()">
+        <span>&lt;</span>
+      </button>
+      <button class="btn btn-icon" (click)="navigateNext()">
+        <span>&gt;</span>
+      </button>
+      <input 
+        type="date" 
+        [value]="formatDateForInput()"
+        (change)="onDateSelect($event)"
+        class="header-date-picker"
+        title="Select date">
+    </div>
+    <div class="header-right">
+      <div class="view-selector">
+        <button 
+          class="btn view-btn" 
+          [class.active]="viewType() === 'day'"
+          (click)="changeView('day')">
+          Day
+        </button>
+        <button 
+          class="btn view-btn" 
+          [class.active]="viewType() === 'week'"
+          (click)="changeView('week')">
+          Week
+        </button>
+        <button 
+          class="btn view-btn" 
+          [class.active]="viewType() === 'month'"
+          (click)="changeView('month')">
+          Month
+        </button>
+      </div>
+      <button class="btn btn-primary" (click)="createEvent()">
+        <span>+ Create</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="calendar-content">
+    @switch (viewType()) {
+      @case ('day') {
+        <app-day-view 
+          [date]="currentDate()" 
+          [events]="events()"
+          (eventClick)="editEvent($event)"
+          (createEvent)="createEventAtDate($event)">
+        </app-day-view>
+      }
+      @case ('week') {
+        <app-week-view 
+          [date]="currentDate()" 
+          [events]="events()"
+          (eventClick)="editEvent($event)"
+          (createEvent)="createEventAtDate($event)">
+        </app-week-view>
+      }
+      @case ('month') {
+        <app-month-view 
+          [date]="currentDate()" 
+          [events]="events()"
+          (eventClick)="editEvent($event)"
+          (createEvent)="createEventAtDate($event)">
+        </app-month-view>
+      }
+    }
+  </div>
+</div>
+
+@if (showEventDialog()) {
+  <app-event-dialog
+    [event]="selectedEvent()"
+    [defaultDate]="dialogDefaultDate()"
+    (close)="onDialogClose()"
+    (save)="onEventSave($event)"
+    (delete)="onEventDelete($event)">
+  </app-event-dialog>
+}

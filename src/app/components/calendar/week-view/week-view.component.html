@@ -1,0 +1,114 @@
+<div class="week-view">
+  <div class="week-header">
+    <div class="time-column-header"></div>
+    @for (day of weekDays(); track day.getTime()) {
+      <div class="day-header" [class.today]="isToday(day)">
+        <div class="day-name">{{ getDayName(day) }}</div>
+        <div class="day-number" [class.today-number]="isToday(day)">
+          {{ getDayNumber(day) }}
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="week-all-day">
+    <div class="all-day-label">All day</div>
+    @for (day of weekDays(); track day.getTime()) {
+      <div class="all-day-cell"
+           (dragover)="$event.preventDefault()"
+           (drop)="onAllDayDrop($event, day)">
+        @for (event of getAllDayEventsForDay(day); track event.uuid) {
+          <div 
+            class="all-day-event" 
+            [style.backgroundColor]="event.color || '#1a73e8'"
+            draggable="true"
+            (dragstart)="onDragStart($event, event)"
+            (dragend)="onDragEnd($event)"
+            (click)="onEventClick(event)"
+            (touchstart)="onTouchStart($event, event)"
+            (touchmove)="onTouchMove($event)"
+            (touchend)="onTouchEnd($event)">
+            {{ event.title }}
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="week-time-grid">
+    <div class="time-column">
+      @for (hour of hours; track hour) {
+        <div class="hour-label">
+          {{ formatHour(hour) }}
+        </div>
+      }
+    </div>
+
+    <div class="days-container">
+      @for (day of weekDays(); track day.getTime()) {
+        <div class="day-column">
+          <div class="day-time-slots">
+            @for (hour of hours; track hour) {
+              <div 
+                class="hour-slot" 
+                [attr.data-hour]="hour"
+                (click)="onTimeSlotClick($event, hour, day)"
+                (dragover)="onDragOver($event, hour, day)"
+                (dragleave)="onDragLeave($event)"
+                (drop)="onDrop($event, hour, day)"
+                [class.drag-over]="isDraggedOver(day, hour)">
+              </div>
+            }
+          </div>
+          <div class="day-events">
+            @for (position of getTimedEventPositionsForDay(day); track position.event.uuid) {
+              <div 
+                class="timed-event" 
+                [ngStyle]="getEventStyle(position, day)"
+                draggable="true"
+                (dragstart)="onDragStart($event, position.event)"
+                (dragend)="onDragEnd($event)"
+                (dragover)="onEventDragOver($event, position.event)"
+                (dragleave)="onEventDragLeave($event)"
+                (click)="onEventClick(position.event)"
+                (touchstart)="onTouchStart($event, position.event)"
+                (touchmove)="onTouchMove($event)"
+                (touchend)="onTouchEnd($event)"
+                [class.dragging]="draggedEvent?.uuid === position.event.uuid"
+                [class.hovered-over]="hoveredEventId === position.event.uuid && draggedEvent && draggedEvent.uuid !== position.event.uuid"
+                [class.resizing]="resizingEvent?.uuid === position.event.uuid">
+                <div class="event-time">
+                  {{ formatEventTime(position.event.start) }}
+                </div>
+                <div class="event-title">{{ position.event.title }}</div>
+                
+                <!-- Resize handles -->
+                <div class="resize-handle resize-handle-top"
+                     (mousedown)="onResizeStart($event, position.event, 'top')"></div>
+                <div class="resize-handle resize-handle-bottom"
+                     (mousedown)="onResizeStart($event, position.event, 'bottom')"></div>
+              </div>
+            }
+            
+            @if (getPreviewEventStyle(day)) {
+              <div 
+                class="timed-event preview-event"
+                [ngStyle]="getPreviewEventStyle(day)">
+                <div class="event-time">Preview</div>
+                <div class="event-title">{{ draggedEvent?.title }}</div>
+              </div>
+            }
+            
+            @if (draggedEvent && isDraggedOver(day, -1)) {
+              <div 
+                class="drop-indicator"
+                [style.top.px]="getDropIndicatorPosition()">
+                <div class="drop-time">{{ formatDropTime() }}</div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>
