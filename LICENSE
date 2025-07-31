@@ -27,7 +27,7 @@ conditions:
    section, credits page, or main documentation):
    
    "This software includes code from the Scheduler project by Lajos Farkas,
-   used under a non-commercial license. Source: https://github.com/bluesoftms/angular-scheduler"
+   used under a non-commercial license. Source: https://github.com/[repository-url]"
    
    For web applications, this attribution must be accessible to end users.
    For desktop/mobile applications, it must be included in the about dialog or credits.
@@ -44,6 +44,22 @@ conditions:
 
 6. Any project using this Software or derivative works must adopt this same
    non-commercial license that prohibits commercial use.
+
+7. CONTRIBUTIONS:
+   - By contributing to this project, you agree that your contributions will be
+     licensed under this same non-commercial license
+   - You retain copyright to your contributions, but grant the project a perpetual,
+     worldwide, non-exclusive, no-charge, royalty-free, irrevocable license to use,
+     reproduce, and distribute your contributions as part of the project
+   - You represent that you have the right to submit the contributions and that
+     your contributions do not infringe any third-party rights
+   - All contributions must comply with the non-commercial nature of this license
+   - Contributors waive any right to compensation, benefits, or claims arising from
+     their contributions to the project
+   - No contributor shall have any claim to ownership, revenue, or other rights
+     beyond attribution for their contributions
+   - Contributors have no claim to any benefits, royalties, or compensation from any
+     commercial licensing or use of the Software by the copyright holder
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
